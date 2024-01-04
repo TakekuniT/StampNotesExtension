@@ -11,14 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
             console.log(response); 
         }); 
-    });*/
+    });*/ 
     console.log('clicked on popup');
     
     chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
         console.log(response.isYt); 
         var check = response.isYt;
         if (check) {
-            document.getElementById('popup-display').innerHTML = '<h1>' + response.title + '</h1><div id="timestamps-list"></div>';
+            document.getElementById('popup-display').innerHTML = '<h2>' + response.title + '</h2><div id="timestamps-list"></div>';
             document.getElementById('timestamps-list').innerHTML = '<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>';
         }
         else {
