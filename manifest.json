@@ -2,19 +2,27 @@
     "manifest_version": 3,
     "name": "StampNotes for YouTube",
     "description": "Add custom annotations to pinpoint timestamps on YouTube Videos",
-    "version": "0.1",
+    "version": "0.2",
     "permissions": [
         "storage",
         "activeTab",
         "scripting",
         "tabs"
     ],
-    "host_permissions": ["*://www.youtube.com/*"],
+    "host_permissions": ["https://*.youtube.com/*"],
     "icons": {
         "16": "images/TimeNotesRed-16.png",
         "48": "images/TimeNotesRed-48.png",
         "128": "images/TimeNotesRed-128.png"
     },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "images/TimeNotesGrey-16.png"
+            ],
+            "matches": ["https://*.youtube.com/*"]
+        }
+    ],
     "action": {
         "default_icon": {
                 "16": "images/TimeNotesGrey-16.png",
@@ -26,7 +34,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://www.youtube.com/*"],
+            "matches": ["https://*.youtube.com/*"],
             "js": ["content.js"]
         }
     ],
