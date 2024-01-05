@@ -3,6 +3,8 @@
 var tabURL = 'default';
 var isYTVid = false
 
+
+// waits for popup.js to send a message, then sends a response back
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === 'checkYTVid') {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
@@ -26,6 +28,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         return false;
     }
 })
+
+
+
+// Listen for changes in the tab
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (tab.url.includes("youtube.com") && tab.url.includes("watch")) {
+      // Send a message to the content script to insert the button
+      chrome.tabs.sendMessage(tabId, { action: "insertButton" });
+    }
+});
+  
 
 /*chrome.tabs.onActivated.addListener(function (activeInfo) {
     chrome.tabs.get(activeInfo.tabId, function (activeTab) {

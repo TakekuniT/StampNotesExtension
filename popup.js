@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });*/ 
     console.log('clicked on popup');
     
+    // sends a message to background.js to get information of the webpage
     chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
         console.log(response.isYt); 
         var check = response.isYt;
