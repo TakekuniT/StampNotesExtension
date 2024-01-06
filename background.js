@@ -33,9 +33,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Listen for changes in the tab
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (tab.url.includes("youtube.com") && tab.url.includes("watch")) {
+    if (tab.url.includes('youtube.com') && tab.url.includes('watch')) {
       // Send a message to the content script to insert the button
-      chrome.tabs.sendMessage(tabId, { action: "insertButton" });
+        const videoID = tab.url.split('?')[1];
+        const videoIDs = new URLSearchParams(videoID);
+        console.log('tab is updated')
+        chrome.tabs.sendMessage(tabId, { 
+            action: 'tabUpdated',
+            id: videoIDs.get('v')
+        });
+
     }
 });
   
