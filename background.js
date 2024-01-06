@@ -11,10 +11,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             // Ensure that tabs is not empty before accessing tabs[0]
             if (tabs && tabs.length > 0) {
                 const tabURL = tabs[0].url;
-                console.log(tabURL);
+                //console.log(tabURL);
+                const videoID = tabURL.split('?')[1];
+                const videoIDs = new URLSearchParams(videoID);
                 var result = {
                     isYt: checkURL(tabURL),
-                    title: tabs[0].title
+                    title: tabs[0].title,
+                    id: videoIDs.get('v')
                 }
                 sendResponse(result);
             } else {

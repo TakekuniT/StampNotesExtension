@@ -10,23 +10,14 @@
 
 
 
-// content.js
-
-
-
-
 console.log('Content script is running / loaded!');
-
-
-
-
 
 // inject button
 var buttonInserted = false;
-
-// create button outside
 var newButton =  document.createElement('button');
 var player;
+var videoID;
+
 
 function insertButton() {    
     // Select the ytp-right-controls div
@@ -65,6 +56,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // Create the player
             player = document.getElementsByClassName("video-stream")[0];
         }
+        videoID = message.id;
         console.log("video id:" + message.id);
   }
 });
@@ -85,14 +77,67 @@ document.addEventListener('keydown', function (event) {
 });
 
 
+// converts seconds into time format
+function convertToTime(totalSeconds) {
+    let hours = Math.floor(totalSeconds / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    var seconds = Math.floor(totalSeconds % 60);
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+    if (hours !== 0) {
+        return minutes + ":" + seconds;
+    }
+    return hours + ":" + minutes + ":" + seconds;
+}
+
+
 
 // stamping a note
 function stampNote() {
     player.pause();
     const annotation = prompt('Enter your annotation:');
-    if (annotation !== '') {
+    if (annotation !== '' && annotation !== null) {
         timeStamp = player.currentTime;
-        console.log('User entered annotation:' + annotation + ' at ' + timeStamp);
+        console.log('User entered annotation:' + annotation + ' at ' + convertToTime(timeStamp));
+        let newStamp = [timeStamp, annotation];
+
+        chrome.storage.sync.get(videoID, function(result) {
+          
+        
+          if (result && Object.prototype.hasOwnProperty.call(result, videoID)) {
+            let currentVal = result[videoID];
+            currentVal.push(newStamp);
+            currentVal.sort(function(a, b) {
+              return a[0] - b[0];
+            });
+        
+            
+            let updateVal = {};
+            updateVal[videoID] = currentVal;
+        
+            chrome.storage.sync.set(updateVal, function() {
+              console.log('Data saved for ' + videoID);
+            });
+
+            console.log(result[videoID]);
+
+          } else {
+            console.log(videoID + ' is not used yet');
+            
+            let newVal = {};
+            newVal[videoID] = [newStamp];
+        
+            chrome.storage.sync.set(newVal, function() {
+              console.log('Data saved for ' + videoID);
+            });
+
+            console.log(result[videoID]);
+          }
+          
+        });
+        
     }
     player.play();
 }
