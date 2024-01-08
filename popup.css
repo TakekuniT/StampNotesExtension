@@ -1,15 +1,19 @@
 /* sets the style of popup content*/
 body {
     padding: 5px;
+    background-color: white;
+    border-radius: 20px;
 }
 
 
 #popup-display {
-    width: 300px;
+    width: 400px;
     height: 250px;
-    padding: 10px;
-    background-color: whitesmoke;
-    margin: 10px;
+    padding: 0px;
+    background-color: white;
+    margin: 0px;
+    margin-bottom: 10px;
+    border-radius: 10px;
 }
 
 #popup-error {
@@ -18,30 +22,151 @@ body {
 }
 
 #timestamps-list {
-    width: 280px;
+    width: 400px;
     height: 200px;
     background-color: white;
     overflow-y: scroll;
-    padding: 5px;
-    margin: 5px;
+    padding: 0px;
+    margin: 0px;
+    border-radius: 10px;
+}
+
+/* Custom scrollbar styles for WebKit browsers (Chrome, Safari) */
+#timestamps-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#timestamps-list::-webkit-scrollbar-thumb {
+    background-color: lightgray; /* Adjust the color as needed */
+    border-radius: 10px;
+}
+
+#timestamps-list::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+}
+
+#timestamps-list::-webkit-scrollbar-thumb:hover {
+    background-color: #bebebe; /* Adjust the hover color as needed */
 }
 
 h1 {
     font-size:15px;
+    font-weight: 500;
+    margin-left: 10px;
+
+
 }
 
 h2 {
-    font-size:10px;
+    font-size:11px;
+    font-weight: 500;
 }
 
 /* Styles for list items */
 #timestamps-list ul {
     list-style-type: none;
-    padding: 0;
-    margin: 0;
+    padding: 1px;
+    margin: 1px;
+    border-radius: 5px;
   }
   
-  #timestamps-list li {
+#timestamps-list li {
+    display: flex;
+    flex-direction: row;
+}
+
+
+#timestamps-list li .stampnote {
     margin-bottom: 5px; /* Adjust margin as needed */
     font-size: 14px; /* Adjust font size for better readability */
-  }
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 8px;
+    box-shadow: 0 4px 8px #231e692b; 
+    max-width: 280px;
+    min-width: 280px;
+}
+
+#timestamps-list .timestamp {
+    min-width: px;
+    max-height: 16px;
+    background-color: #b5b0de5e;
+    border-radius: 30px;
+    padding: 4px; /* Adjust padding for button size */
+    margin-right: 5px; 
+    font-size: 12px;
+    cursor: pointer;
+    /*border-style: solid; 
+    border-color: #f0eff2; 
+    border-width: 2px;*/
+}
+
+#timestamps-list .timestamp:hover {
+    background-color: #d9d7ef; /* Change color on hover */
+}
+
+#timestamps-list .timestamp:active {
+    background-color: #bebada; /* Change color on click */
+}
+
+#timestamps-list .annotation {
+    /* Add any additional styling for the annotation */
+    margin-left: 10px; /* Add some space between timestamp and annotation */
+}
+
+
+.delete-buttons {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0px;
+    padding: 0px;
+    border: 0px;
+    border-radius: 1000px;
+    background-color: #ff94ad5e;
+    cursor: pointer;
+    margin-top: 15px;
+    margin-left: 12px;
+}
+
+.delete-buttons:hover {
+    background-color: #ffcbd7; /* Change color on hover */
+}
+
+.delete-buttons:active {
+    background-color: #ffb1c3; /* Change color on click */
+}
+
+.delete-buttons svg {
+    vertical-align: middle;
+}
+
+
+
+.edit-buttons {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0px;
+    padding: 0px;
+    border: 0px;
+    border-radius: 1000px;
+    background-color: #84c1ff5e;
+    cursor: pointer;
+    margin-top: 15px;
+    margin-left: 5px;
+}
+
+.edit-buttons:hover {
+    background-color: #badbff; /* Change color on hover */
+}
+
+.edit-buttons:active {
+    background-color: #90c3fb; /* Change color on click */
+}
+
+.edit-buttons svg {
+    vertical-align: middle;
+}

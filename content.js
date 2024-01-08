@@ -105,7 +105,7 @@ function stampNote() {
 
         chrome.storage.sync.get(videoID, function(result) {
           
-        
+          // adds to existing key
           if (result && Object.prototype.hasOwnProperty.call(result, videoID)) {
             let currentVal = result[videoID];
             currentVal.push(newStamp);
@@ -122,7 +122,8 @@ function stampNote() {
             });
 
             console.log(result[videoID]);
-
+          
+          // adds new key
           } else {
             console.log(videoID + ' is not used yet');
             

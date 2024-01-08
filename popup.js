@@ -4,6 +4,104 @@
 });*/
 // popup.js
 
+
+
+function generateList(title, id) {
+  document.getElementById('popup-display').innerHTML = '';
+  let popup = document.getElementById('popup-display');
+
+  let header = document.createElement('h1');
+  //header.textContent = title;
+  header.textContent = 'StampNotes';
+  popup.appendChild(header);
+
+  let list = document.createElement('ul');
+  list.id = 'timestamps-list';
+
+  let deleteButtonCols = document.createElement('div');
+  deleteButtonCols.className = 'deleteButtons';
+
+
+
+  //let notesContainer = document.createElement('div');
+  //notesContainer.className = 'notes';
+
+  chrome.storage.sync.get([id], function(result) {
+    console.log('testing');
+    console.log(result[id]);
+    let valueList = result[id];
+    for (let stamp of valueList) {
+      let time = convertToTime(stamp[0]);
+      let note = stamp[1];
+      let item = document.createElement('li');
+      item.id = time;
+
+
+      let del = document.createElement('button');
+      del.className = 'delete-buttons';
+      del.id = time;
+      del.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff5f84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>';
+
+      let edit = document.createElement('button');
+      edit.className = 'edit-buttons';
+      edit.id = time;
+      edit.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#208aff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-square"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>';
+
+      let timeDiv = document.createElement('div');
+      timeDiv.className = 'timestamp';
+      timeDiv.textContent = time;
+
+      let noteDiv = document.createElement('div');
+      noteDiv.className = 'annotation';
+      noteDiv.textContent = note;
+      /*
+      deleteButtonCols.appendChild(del);
+      item.appendChild(timeDiv);
+      item.appendChild(noteDiv);*/
+      
+      let stampNote = document.createElement('li');
+      stampNote.className = 'stampnote';
+      let buttons = document.createElement('li');
+
+      stampNote.appendChild(timeDiv);
+      stampNote.appendChild(noteDiv);
+      buttons.appendChild(edit);
+      buttons.appendChild(del);
+      
+      
+      //item.appendChild(del);
+      item.appendChild(stampNote);
+      item.appendChild(buttons);
+      list.appendChild(item);
+    }
+    //gridContainer.appendChild(list);
+    //list.appendChild(notesContainer)
+    //list.appendChild(deleteButtonCols); 
+    popup.appendChild(list);
+    //popup.appendChild(list);
+    
+  });
+  
+}
+
+
+
+  // converts seconds into time format
+  function convertToTime(totalSeconds) {
+    let hours = Math.floor(totalSeconds / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    var seconds = Math.floor(totalSeconds % 60);
+
+    hours = (hours < 10) ? '0' + hours : hours;
+    minutes = (minutes < 10) ? '0' + minutes : minutes;
+    seconds = (seconds < 10) ? '0' + seconds : seconds;
+    if (hours === '00') {
+        return minutes + ':' + seconds;
+    }
+    return hours + ':' + minutes + ':' + seconds;
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
     /*document.getElementById('timestamps-list').addEventListener('click', function(){
         alert('clicked on list');
@@ -21,50 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    function generateList(title, id) {
-        document.getElementById('popup-display').innerHTML = '<h2>' + title + '</h2><div id="timestamps-list"></div>';
-        console.log('checkpoint');
-        
-        chrome.storage.sync.get([id], function(result) {
-        
-            console.log(result[id]);
-            let htmlList = generateHTMLList(result[id]);
-            console.log(htmlList);
-            document.getElementById('timestamps-list').innerHTML = htmlList;
-        });
-    }
 
 
-    function generateHTMLList(valueList) {
-        // value list is the value array of the video ID key, ex. [[time, note], [time, note]]
-        let result = '';
-        result += '<ul>';
-        for (let stamp of valueList) {
-            let time = convertToTime(stamp[0]);
-            let note = stamp[1];
-            result += '<li>';
-            result += time + '&nbsp;&nbsp;-&nbsp;&nbsp;' + note;
-            result += '</li>';
-        }
-        result += '</ul>'
-        return result;
-        
-    }
 
-    // converts seconds into time format
-  function convertToTime(totalSeconds) {
-      let hours = Math.floor(totalSeconds / 3600);
-      let minutes = Math.floor((totalSeconds % 3600) / 60);
-      var seconds = Math.floor(totalSeconds % 60);
-
-      hours = (hours < 10) ? "0" + hours : hours;
-      minutes = (minutes < 10) ? "0" + minutes : minutes;
-      seconds = (seconds < 10) ? "0" + seconds : seconds;
-      if (hours !== 0) {
-          return minutes + ":" + seconds;
-      }
-      return hours + ":" + minutes + ":" + seconds;
-  }
   
     // sends a message to background.js to get information of the webpage
     chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
