@@ -34,7 +34,7 @@ function generateList(title, id) {
       let time = convertToTime(stamp[0]);
       let note = stamp[1];
       let item = document.createElement('li');
-      item.id = time;
+      item.id = stamp[0];
 
 
       let del = document.createElement('button');
@@ -62,6 +62,7 @@ function generateList(title, id) {
       let stampNote = document.createElement('li');
       stampNote.className = 'stampnote';
       let buttons = document.createElement('li');
+      buttons.className = 'buttons';
 
       stampNote.appendChild(timeDiv);
       stampNote.appendChild(noteDiv);
@@ -79,15 +80,18 @@ function generateList(title, id) {
     //list.appendChild(deleteButtonCols); 
     popup.appendChild(list);
     //popup.appendChild(list);
-    
+    setUpButtons();
+
+
   });
+
   
 }
 
 
 
-  // converts seconds into time format
-  function convertToTime(totalSeconds) {
+// converts seconds into time format
+function convertToTime(totalSeconds) {
     let hours = Math.floor(totalSeconds / 3600);
     let minutes = Math.floor((totalSeconds % 3600) / 60);
     var seconds = Math.floor(totalSeconds % 60);
@@ -102,6 +106,34 @@ function generateList(title, id) {
 }
 
 
+function rewind(event) {
+  let currButton = event.target;
+  let timeStamp = ((currButton.parentNode).parentNode).id;
+  console.log('button pressed');
+  let currentTime = parseFloat(timeStamp);
+  //player.currentTime = 0;//parseFloat(timeStamp);
+  //player.play();
+  // send message to content.js
+
+  chrome.runtime.sendMessage({ action: 'SetUpButton', value: currentTime }, function(response) {
+    console.log('message sent to background.js');
+    console.log(response);
+  });
+}
+
+
+function setUpButtons() {
+  //var player = document.getElementsByClassName("video-stream")[0];
+  var timeStamps = document.getElementsByClassName('timestamp');
+  console.log(timeStamps.length);
+  for (let i = 0; i < timeStamps.length; i++) {
+    timeStamps[i].addEventListener("click", rewind);
+  }
+  
+}
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     /*document.getElementById('timestamps-list').addEventListener('click', function(){
         alert('clicked on list');
@@ -113,13 +145,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var videoTitle;
     var videoKey;
 
+    /*
     console.log('clicked on popup');
     chrome.storage.sync.get(function(result) {
         console.log(result);
-    });
-
-
-
+    });*/
+    var player = document.getElementsByClassName("video-stream")[0];
 
 
   
@@ -135,7 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
         else {
             document.getElementById('popup').innerHTML = '<div id="popup-error"> <h2>This is not a YouTube Video</h2> </div>';
         }
-    }); 
+    });
+    
+    
+
+    
+
     
 });
 

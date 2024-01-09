@@ -45,20 +45,27 @@ function insertButton() {
 }
 
 
-// Listen for a message from the background script
+// Listen for a message from the background script and popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "tabUpdated") {
+    if (message.action === 'tabUpdated') {
         if (buttonInserted === false) {
             insertButton();
             buttonInserted = true;
         }
         if (!player) {
         // Create the player
-            player = document.getElementsByClassName("video-stream")[0];
+            player = document.getElementsByClassName('video-stream')[0];
         }
         videoID = message.id;
-        console.log("video id:" + message.id);
-  }
+        //console.log('video id:' + message.id);
+    } else if (message.action === 'SetUpButton') {
+      console.log('msg form popup received, value is', message.value);
+      player.currentTime = message.value;
+      player.play();
+    }
+    else {
+      console.log('message fialed womp womp');
+    }
 });
 
 //insertButton();

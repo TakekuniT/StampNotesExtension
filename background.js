@@ -26,6 +26,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         });
         return true; // response will be sent asynchronously
     } 
+    else if (request.action === 'SetUpButton') {
+        sendResponse('reached background');
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            console.log('tab id extraacted:', tabs[0].id);
+            console.log('time is', request.value);
+            chrome.tabs.sendMessage(tabs[0].id, { action: request.action , value: request.value});
+        });
+    }
     else {
         sendResponse('invalid request');
         return false;
@@ -40,7 +48,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       // Send a message to the content script to insert the button
         const videoID = tab.url.split('?')[1];
         const videoIDs = new URLSearchParams(videoID);
-        console.log('tab is updated')
+        console.log('tab is updated');
+        //console.log(tabId);
         chrome.tabs.sendMessage(tabId, { 
             action: 'tabUpdated',
             id: videoIDs.get('v')

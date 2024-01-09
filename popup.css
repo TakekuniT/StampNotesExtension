@@ -86,7 +86,7 @@ h2 {
     border-radius: 15px;
     padding: 10px;
     margin: 8px;
-    box-shadow: 0 4px 8px #231e692b; 
+    box-shadow: 0 4px 8px #624c7566; 
     max-width: 280px;
     min-width: 280px;
 }
@@ -130,6 +130,8 @@ h2 {
     cursor: pointer;
     margin-top: 15px;
     margin-left: 12px;
+    box-shadow: 0 4px 8px #732c2c6e; 
+
 }
 
 .delete-buttons:hover {
@@ -157,6 +159,8 @@ h2 {
     cursor: pointer;
     margin-top: 15px;
     margin-left: 5px;
+    box-shadow: 0 4px 8px #2a247c7a; 
+
 }
 
 .edit-buttons:hover {
