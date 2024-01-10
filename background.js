@@ -26,12 +26,27 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         });
         return true; // response will be sent asynchronously
     } 
-    else if (request.action === 'SetUpButton') {
+    else if (request.action === 'SetUpButtonRewind') {
         sendResponse('reached background');
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             console.log('tab id extraacted:', tabs[0].id);
             console.log('time is', request.value);
             chrome.tabs.sendMessage(tabs[0].id, { action: request.action , value: request.value});
+        });
+    }
+    else if (request.action === 'Edit') {
+        sendResponse('reached the back rooms');
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { action: request.action , value: request.value, id: request.id, note: request.note});
+        });
+    }
+    else if (request.action === 's shortcut key') {
+        sendResponse('shortcut key reached backgrouond');
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            console.log(tabs[0]);
+            if (tabs[0].url.includes('youtube.com') && tabs[0].url.includes('watch')) {
+                chrome.tabs.sendMessage(tabs[0].id, { action: 's key shortcut'});
+            }
         });
     }
     else {
@@ -57,6 +72,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     }
 });
+
+
+
+
   
 
 /*chrome.tabs.onActivated.addListener(function (activeInfo) {

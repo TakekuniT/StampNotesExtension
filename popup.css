@@ -16,9 +16,22 @@ body {
     border-radius: 10px;
 }
 
+
 #popup-error {
+    min-width: 0px;
+    min-height: 0px;
+    padding: 0px;
+    margin: 5px;
+    white-space: nowrap;
+}
+
+
+#empty-message {
     width: 140px;
-    height: 20px;
+    height: px;
+    text-align: center;
+    margin: 0px;
+    padding: 20px;
 }
 
 #timestamps-list {
@@ -59,7 +72,7 @@ h1 {
 }
 
 h2 {
-    font-size:11px;
+    font-size:14px;
     font-weight: 500;
 }
 
@@ -116,6 +129,8 @@ h2 {
 #timestamps-list .annotation {
     /* Add any additional styling for the annotation */
     margin-left: 10px; /* Add some space between timestamp and annotation */
+    word-break: break-word;
+
 }
 
 

@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "StampNotes for YouTube",
     "description": "Add custom annotations to pinpoint timestamps on YouTube Videos",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "permissions": [
         "storage",
         "activeTab",

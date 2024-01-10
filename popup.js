@@ -17,6 +17,7 @@ function generateList(title, id) {
 
   let list = document.createElement('ul');
   list.id = 'timestamps-list';
+  
 
   let deleteButtonCols = document.createElement('div');
   deleteButtonCols.className = 'deleteButtons';
@@ -27,9 +28,25 @@ function generateList(title, id) {
   //notesContainer.className = 'notes';
 
   chrome.storage.sync.get([id], function(result) {
-    console.log('testing');
+    list.className = id;
     console.log(result[id]);
     let valueList = result[id];
+
+    if (!result[id] || valueList.length === 0) {
+        //document.getElementById('popup').innerHTML = '<div id="popup-error"> <h2>This is not a YouTube Video</h2> </div>';
+        let outerPop = document.getElementById('popup');
+        
+        
+        outerPop.innerHTML = '';
+        let emptyList = document.createElement('div');
+        emptyList.id = 'empty-message';
+        let emptyMessage = document.createElement('h2');
+        emptyMessage.innerHTML = 'Click on <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-stamp"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-3-3c-1.66 0-3 1-3 3s1 2 1 3.5V13"/></svg> or press <code>s</code> to add a StampNote';
+        emptyList.appendChild(emptyMessage);
+        outerPop.append(emptyList);
+        return;
+    }
+    
     for (let stamp of valueList) {
       let time = convertToTime(stamp[0]);
       let note = stamp[1];
@@ -92,9 +109,10 @@ function generateList(title, id) {
 
 // converts seconds into time format
 function convertToTime(totalSeconds) {
-    let hours = Math.floor(totalSeconds / 3600);
-    let minutes = Math.floor((totalSeconds % 3600) / 60);
-    var seconds = Math.floor(totalSeconds % 60);
+    let rounded = Math.round(totalSeconds);
+    let hours = Math.floor(rounded / 3600);
+    let minutes = Math.floor((rounded % 3600) / 60);
+    var seconds = Math.floor(rounded % 60);
 
     hours = (hours < 10) ? '0' + hours : hours;
     minutes = (minutes < 10) ? '0' + minutes : minutes;
@@ -115,24 +133,75 @@ function rewind(event) {
   //player.play();
   // send message to content.js
 
-  chrome.runtime.sendMessage({ action: 'SetUpButton', value: currentTime }, function(response) {
+  chrome.runtime.sendMessage({ action: 'SetUpButtonRewind', value: currentTime }, function(response) {
     console.log('message sent to background.js');
     console.log(response);
   });
 }
 
+function deleteClick(event) {
+  let currButton = event.target.closest('.delete-buttons');
+
+  let currentID = (((currButton.parentNode).parentNode).parentNode).className;
+  let stampToDelete = ((currButton.parentNode).parentNode).id;
+  console.log('delete lcicked', stampToDelete );
+
+  chrome.storage.sync.get(currentID, function(result) {
+    let updatedData = result[currentID].filter(pair => pair[0] !== parseFloat(stampToDelete));
+    let updateVal = {};
+    updateVal[currentID] = updatedData;
+    chrome.storage.sync.set(updateVal, function() {
+      console.log('Data has been updated.', updatedData);
+      generateList('no title', currentID);
+    });
+  });
+}
+
+function editClick(event) {
+  let currButton = event.target.closest('.edit-buttons');
+
+  let currentID = (((currButton.parentNode).parentNode).parentNode).className;
+  let stampToEdit = ((currButton.parentNode).parentNode).id;
+  
+  let currentNote = currButton.parentNode.parentNode.children[0].children[1].textContent;
+  console.log('button object', currButton);
+  console.log('current annot', currButton.parentNode.parentNode.children[0].children[1].textContent);
+  
+
+  chrome.runtime.sendMessage({ action: 'Edit', value: stampToEdit, id: currentID, note: currentNote }, function(response) {
+    console.log('message sent to background.js');
+    console.log(response);
+  });
+}
 
 function setUpButtons() {
   //var player = document.getElementsByClassName("video-stream")[0];
   var timeStamps = document.getElementsByClassName('timestamp');
   console.log(timeStamps.length);
+
+  var deleteButtons = document.getElementsByClassName('delete-buttons');
+  var editButtons = document.getElementsByClassName('edit-buttons');
+
+
   for (let i = 0; i < timeStamps.length; i++) {
-    timeStamps[i].addEventListener("click", rewind);
+    timeStamps[i].addEventListener('click', rewind);
+    deleteButtons[i].addEventListener('click', deleteClick);
+    editButtons[i].addEventListener('click', editClick);
   }
-  
+
 }
 
+// checks for key clicks
+document.addEventListener('keydown', function (event) {
+  if (event.key === 's') {
+    
+    chrome.runtime.sendMessage({ action: 's shortcut key' }, function(response) {
+      console.log('message sent to background.js');
+      console.log(response);
+    });
 
+  }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     /*document.getElementById('timestamps-list').addEventListener('click', function(){
@@ -167,10 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('popup').innerHTML = '<div id="popup-error"> <h2>This is not a YouTube Video</h2> </div>';
         }
     });
-    
-    
-
-    
+     
 
     
 });

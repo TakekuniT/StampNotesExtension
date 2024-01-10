@@ -58,10 +58,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         videoID = message.id;
         //console.log('video id:' + message.id);
-    } else if (message.action === 'SetUpButton') {
+    } else if (message.action === 'SetUpButtonRewind') {
       console.log('msg form popup received, value is', message.value);
       player.currentTime = message.value;
-      player.play();
+      //player.play();
+    }
+    else if (message.action === 'Edit') {
+      console.log('msg from popup: ', message.value);
+      stampNote(message.note, message.value);
+    }
+    else if (message.action === 's key shortcut') {
+      /*if ( document.activeElement.id === 'contenteditable-root') {
+        // The 's' key was pressed in an input field or textarea
+        console.log('User is typing in an input field or textarea.');
+        sendResponse('shortcut key reached content');
+        return;
+      }*/
+      stampNote();
     }
     else {
       console.log('message fialed womp womp');
@@ -79,7 +92,20 @@ newButton.addEventListener('click', e => {
 // checks for key clicks
 document.addEventListener('keydown', function (event) {
     if (event.key === 's') {
-        stampNote();
+      const focusedElement = document.activeElement;
+      const isTyping = ['INPUT', 'TEXTAREA'].includes(focusedElement.tagName);
+      /*
+      if ( document.activeElement.id === 'contenteditable-root' || document.activeElement.id === 'search-input') {
+        // The 's' key was pressed in an input field or textarea
+        console.log('User is typing in an input field or textarea.');
+        return;
+      }*/
+      if (isTyping || document.activeElement.id === 'contenteditable-root') {
+        console.log('User is typing in an input field or textarea.');
+        return;
+      }
+      stampNote();
+      console.log('pop up opend from webpage s key');
     }
 });
 
@@ -102,11 +128,16 @@ function convertToTime(totalSeconds) {
 
 
 // stamping a note
-function stampNote() {
+function stampNote(currentNote ='', timeVal = 0) {
     player.pause();
-    const annotation = prompt('Enter your annotation:');
+    const annotation = prompt('Enter your annotation:', currentNote);
     if (annotation !== '' && annotation !== null) {
-        timeStamp = player.currentTime;
+        if (currentNote === '') {
+          timeStamp = player.currentTime;
+        }
+        else {
+          timeStamp = parseFloat(timeVal);
+        }
         console.log('User entered annotation:' + annotation + ' at ' + convertToTime(timeStamp));
         let newStamp = [timeStamp, annotation];
 
@@ -115,6 +146,11 @@ function stampNote() {
           // adds to existing key
           if (result && Object.prototype.hasOwnProperty.call(result, videoID)) {
             let currentVal = result[videoID];
+            if (currentNote !== '') {
+              currentVal = currentVal.filter(pair => pair[0] !== timeStamp);
+              console.log('after rmeoving:', currentVal);
+            }
+            
             currentVal.push(newStamp);
             currentVal.sort(function(a, b) {
               return a[0] - b[0];
