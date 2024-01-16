@@ -1,8 +1,5 @@
 // performs tasks that do not involve user interactions
-
-var tabURL = 'default';
-var isYTVid = false
-
+var previousData = [];
 
 // waits for popup.js to send a message, then sends a response back
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -36,6 +33,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
     else if (request.action === 'Edit') {
         sendResponse('reached the back rooms');
+        chrome.storage.sync.get(request.id, function(result) {
+            previousData.push(result[request.id]);
+            console.log('prev', previousData);
+        });
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: request.action , value: request.value, id: request.id, note: request.note});
         });
@@ -47,6 +48,74 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             if (tabs[0].url.includes('youtube.com') && tabs[0].url.includes('watch')) {
                 chrome.tabs.sendMessage(tabs[0].id, { action: 's key shortcut'});
             }
+        });
+    }
+    else if (request.action === 'Delete') {
+        chrome.storage.sync.get(request.id, function(result) {
+            previousData.push(result[request.id]);
+            console.log('id', request.id);
+            console.log('previous', previousData);
+            sendResponse(previousData);
+        });
+         
+    }
+    else if (request.action === 'Undo') {
+        //sendResponse(previousData);
+        //console.log('prev data', previousData);
+        let updateVal = {};
+        let oldData = previousData.pop();
+        console.log('old data', oldData);
+        let videoID = request.id;
+        updateVal[videoID] = oldData;
+        
+        chrome.storage.sync.get(videoID, function(result) {
+            if (result[videoID].length === 0) {
+                console.log('its empty sending false');
+                sendResponse(false);
+            }
+            else {
+                console.log('not empty sending true');
+                sendResponse(true);
+            }
+        });
+
+        chrome.storage.sync.set(updateVal, function() {
+            //sendResponse('undo succ');  
+            console.log('undo success for',  videoID);
+              
+        });
+    }
+    else if (request.action === "Stamp") {
+
+        /*previousData.push(request.value);
+        console.log('stamp pushed');*/
+        if (request.indicator === '') {
+            previousData = [];
+            console.log('reset');
+            previousData.push(request.value);
+        }
+        
+        console.log('stamp pushed');
+        
+        
+           
+    }
+    else if (request.action === 'Clear') {
+        chrome.storage.sync.get(request.id, function(result) {
+            previousData.push(result[request.id]);
+            console.log('previous', previousData);
+            sendResponse(previousData);
+        });
+
+
+        let updateVal = {};
+        let newData = [];
+        
+        updateVal[request.id] = newData;
+
+        chrome.storage.sync.set(updateVal, function() {
+            console.log('delete success');
+              
         });
     }
     else {
@@ -69,6 +138,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             action: 'tabUpdated',
             id: videoIDs.get('v')
         });
+        previousData = [];
 
     }
 });
@@ -76,26 +146,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 
 
-  
-
-/*chrome.tabs.onActivated.addListener(function (activeInfo) {
-    chrome.tabs.get(activeInfo.tabId, function (activeTab) {
-        checkTab(activeTab);
-    }); 
-});*/
 
 let urlList = [];
 
 
-/*chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete'){
-        tabURL = tab.url;
-        isYTVid = checkTab(tab);
-    }
-    else {
-        console.log('fail???');
-    }
-})*/
 
 
 function checkURL(url){
@@ -107,16 +161,5 @@ function checkURL(url){
     }
 }
 
-/*function checkTab(activeTab){
-    if (activeTab && activeTab.url && activeTab.url.includes('youtube.com/watch')) {
-        console.log('This is a YouTube video page:', activeTab.url);
-        let urlKey = activeTab.url.split('?')[1];
-        urlList.push(urlKey);
-        console.log(urlKey);
-        return true;
-    } else {
-        console.log('This is not a YouTube video page:', activeTab.url);
-        return false;
-    }
-}*/
+
 

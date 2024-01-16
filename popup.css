@@ -1,6 +1,6 @@
 /* sets the style of popup content*/
 body {
-    padding: 5px;
+    padding: 0px;
     background-color: white;
     border-radius: 20px;
 }
@@ -9,11 +9,13 @@ body {
 #popup-display {
     width: 400px;
     height: 250px;
-    padding: 0px;
     background-color: white;
     margin: 0px;
     margin-bottom: 10px;
     border-radius: 10px;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 
@@ -36,7 +38,7 @@ body {
 
 #timestamps-list {
     width: 400px;
-    height: 200px;
+    height: 185px;
     background-color: white;
     overflow-y: scroll;
     padding: 0px;
@@ -63,10 +65,14 @@ body {
     background-color: #bebebe; /* Adjust the hover color as needed */
 }
 
+#timestamps-list::-webkit-scrollbar-thumb:active {
+    background-color: #a5a4a4; /* Adjust the hover color as needed */
+}
+
 h1 {
     font-size:15px;
     font-weight: 500;
-    margin-left: 10px;
+    margin: 10px;
 
 
 }
@@ -113,7 +119,8 @@ h2 {
     margin-right: 5px; 
     font-size: 12px;
     cursor: pointer;
-    /*border-style: solid; 
+    transition: background-color 0.3s ease;
+        /*border-style: solid; 
     border-color: #f0eff2; 
     border-width: 2px;*/
 }
@@ -146,7 +153,7 @@ h2 {
     margin-top: 15px;
     margin-left: 12px;
     box-shadow: 0 4px 8px #732c2c6e; 
-
+    transition: background-color 0.3s ease;
 }
 
 .delete-buttons:hover {
@@ -175,7 +182,7 @@ h2 {
     margin-top: 15px;
     margin-left: 5px;
     box-shadow: 0 4px 8px #2a247c7a; 
-
+    transition: background-color 0.3s ease;
 }
 
 .edit-buttons:hover {
@@ -187,5 +194,74 @@ h2 {
 }
 
 .edit-buttons svg {
+    vertical-align: middle;
+}
+
+.clear-button {
+    width: 24px;
+    height: 24px;
+    padding: 0px;
+    border: 0px;
+    border-radius: 1000px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 302px;
+    transition: background-color 0.3s ease;
+}
+
+.clear-button:hover {
+    background-color: #e5e5e5; 
+}
+
+.clear-button:active {
+    background-color: #c5c5c5; 
+}
+
+.clear-button svg {
+    vertical-align: middle;
+}
+
+#clearIcon {
+    stroke: dimgrey;
+    transition: stroke 0.3s ease;
+}
+/*
+#clearIcon:hover {
+    stroke: grey;
+}
+
+#clearIcon:active {
+    stroke: dimgrey;
+}*/
+
+
+.undo-button {
+    width: 24px;
+    height: 24px;
+    padding: 0px;
+    border: 0px;
+    border-radius: 1000px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 12px;
+}
+
+#undoIcon {
+    stroke: darkgrey;
+    transition: stroke 0.3s ease;
+}
+#undoIcon:hover {
+    stroke: grey;
+}
+
+#undoIcon:active {
+    stroke: dimgrey;
+}
+
+.undo-button svg {
     vertical-align: middle;
 }

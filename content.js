@@ -112,24 +112,25 @@ document.addEventListener('keydown', function (event) {
 
 // converts seconds into time format
 function convertToTime(totalSeconds) {
-    let hours = Math.floor(totalSeconds / 3600);
-    let minutes = Math.floor((totalSeconds % 3600) / 60);
-    var seconds = Math.floor(totalSeconds % 60);
+  let rounded = Math.round(totalSeconds);
+  let hours = Math.floor(rounded / 3600);
+  let minutes = Math.floor((rounded % 3600) / 60);
+  var seconds = Math.floor(rounded % 60);
 
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-    if (hours !== 0) {
-        return minutes + ":" + seconds;
-    }
-    return hours + ":" + minutes + ":" + seconds;
+  hours = (hours < 10) ? '0' + hours : hours;
+  minutes = (minutes < 10) ? '0' + minutes : minutes;
+  seconds = (seconds < 10) ? '0' + seconds : seconds;
+  if (hours === '00') {
+      return minutes + ':' + seconds;
+  }
+  return hours + ':' + minutes + ':' + seconds;
 }
-
 
 
 // stamping a note
 function stampNote(currentNote ='', timeVal = 0) {
     player.pause();
+    let saveToStack;
     const annotation = prompt('Enter your annotation:', currentNote);
     if (annotation !== '' && annotation !== null) {
         if (currentNote === '') {
@@ -150,15 +151,27 @@ function stampNote(currentNote ='', timeVal = 0) {
               currentVal = currentVal.filter(pair => pair[0] !== timeStamp);
               console.log('after rmeoving:', currentVal);
             }
+
+            saveToStack = currentVal;
             
             currentVal.push(newStamp);
             currentVal.sort(function(a, b) {
               return a[0] - b[0];
             });
+
+            if (currentNote === '') {
+              saveToStack = currentVal;
+            }
         
             
             let updateVal = {};
             updateVal[videoID] = currentVal;
+
+            chrome.runtime.sendMessage({ action: 'Stamp', value: saveToStack, indicator: currentNote}, function(response) {
+              console.log('response is', response);
+              console.log('stamped', currentVal);
+                  
+            });
         
             chrome.storage.sync.set(updateVal, function() {
               console.log('Data saved for ' + videoID);
