@@ -6,6 +6,21 @@
 
 
 
+// calls chrome api to get values from storage
+async function getStorage(id) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get([id], function(result) {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        console.log(result[id]);
+        resolve(result[id]);
+      }
+    });
+  });
+}
+
+// called when need to generate the content of popup
 function generateList(title, id) {
   if (title !== 'undoLast'){
     //document.getElementById('popup-display').innerHTML = ' ';
@@ -62,6 +77,7 @@ function generateList(title, id) {
     }
 
 
+    // if popup already has content, clear content, otherwise create it
     let popup;
     let popupGet = document.getElementById('popup-display');
     let header = document.createElement('h1');
@@ -79,11 +95,6 @@ function generateList(title, id) {
       
     }
     popup.appendChild(header);
-
-    
-    
-
-
 
 
     for (let stamp of valueList) {
@@ -162,21 +173,6 @@ function generateList(title, id) {
 
 
 
-// converts seconds into time format
-function convertToTime(totalSeconds) {
-    let rounded = Math.round(totalSeconds);
-    let hours = Math.floor(rounded / 3600);
-    let minutes = Math.floor((rounded % 3600) / 60);
-    var seconds = Math.floor(rounded % 60);
-
-    hours = (hours < 10) ? '0' + hours : hours;
-    minutes = (minutes < 10) ? '0' + minutes : minutes;
-    seconds = (seconds < 10) ? '0' + seconds : seconds;
-    if (hours === '00') {
-        return minutes + ':' + seconds;
-    }
-    return hours + ':' + minutes + ':' + seconds;
-}
 
 
 function rewindClick(event) {
@@ -188,7 +184,7 @@ function rewindClick(event) {
   //player.play();
   // send message to content.js
 
-  chrome.runtime.sendMessage({ action: 'SetUpButtonRewind', value: currentTime }, function(response) {
+  chrome.runtime.sendMessage({ action: 'Rewind', value: currentTime }, function(response) {
     console.log(response);
   });
 }
@@ -298,24 +294,10 @@ document.addEventListener('keydown', function (event) {
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    /*document.getElementById('timestamps-list').addEventListener('click', function(){
-        alert('clicked on list');
-        //document.getElementById('timestamps-list').innerHTML = '<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>';
-        chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
-            console.log(response); 
-        }); 
-    });*/ 
-
-    /*
-    console.log('clicked on popup');
-    chrome.storage.sync.get(function(result) {
-        console.log(result);
-    });*/
-    //var player = document.getElementsByClassName("video-stream")[0];
 
 
-  
+// listens for loading pop up
+document.addEventListener('DOMContentLoaded', function() { 
     // sends a message to background.js to get information of the webpage
     chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
         console.log(response.isYt); 
@@ -333,6 +315,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
 });
+
+
+// converts seconds into time format
+function convertToTime(totalSeconds) {
+  let rounded = Math.round(totalSeconds);
+  let hours = Math.floor(rounded / 3600);
+  let minutes = Math.floor((rounded % 3600) / 60);
+  var seconds = Math.floor(rounded % 60);
+
+  hours = (hours < 10) ? '0' + hours : hours;
+  minutes = (minutes < 10) ? '0' + minutes : minutes;
+  seconds = (seconds < 10) ? '0' + seconds : seconds;
+  if (hours === '00') {
+      return minutes + ':' + seconds;
+  }
+  return hours + ':' + minutes + ':' + seconds;
+}
+
 
 
   

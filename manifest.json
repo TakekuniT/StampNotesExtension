@@ -11,9 +11,9 @@
     ],
     "host_permissions": ["https://*.youtube.com/*"],
     "icons": {
-        "16": "images/TimeNotesRed-16.png",
-        "48": "images/TimeNotesRed-48.png",
-        "128": "images/TimeNotesRed-128.png"
+        "16": "images/StampNotes.png",
+        "48": "images/StampNotes.png",
+        "128": "images/StampNotes.png"
     },
     "web_accessible_resources": [
         {
@@ -25,9 +25,9 @@
     ],
     "action": {
         "default_icon": {
-                "16": "images/TimeNotesGrey-16.png",
-                "48": "images/TimeNotesGrey-48.png",
-                "128": "images/TimeNotesGrey-128.png"
+                "16": "images/StampNotesGrey.png",
+                "48": "images/StampNotesGrey.png",
+                "128": "images/StampNotesGrey.png"
         },
         "default_title": "StampNotes",
         "default_popup": "popup.html"

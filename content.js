@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         videoID = message.id;
         //console.log('video id:' + message.id);
-    } else if (message.action === 'SetUpButtonRewind') {
+    } else if (message.action === 'Rewind') {
       console.log('msg form popup received, value is', message.value);
       player.currentTime = message.value;
       //player.play();

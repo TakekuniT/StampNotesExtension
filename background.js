@@ -23,8 +23,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         });
         return true; // response will be sent asynchronously
     } 
-    else if (request.action === 'SetUpButtonRewind') {
-        sendResponse('reached background');
+    else if (request.action === 'Rewind') {
+        sendResponse('reached background rewind');
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             console.log('tab id extraacted:', tabs[0].id);
             console.log('time is', request.value);
