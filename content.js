@@ -1,11 +1,7 @@
 // enhances/modifies functionalities of a webpage
 
 // immediately invoked function expression
-/*
-(function() {
-   
-})();
-*/
+
 
 
 
@@ -24,13 +20,16 @@ function insertButton() {
     var rightControlsDiv = document.querySelector('.ytp-right-controls');
 
     // Create a new button element
-    newButton.className = 'ytp-size-button ytp-button'; // 
+    newButton.className = 'ytp-stamp-button ytp-button'; 
     newButton.style.backgroundColor = 'transparent';
     newButton.setAttribute('aria-keyshortcuts', 's')
-    newButton.setAttribute('data-priority', '2'); // Add the data-priority attribute
-    newButton.setAttribute('data-title-no-tool-tip', 'Stamp a note')
+    newButton.setAttribute('data-priority', '2'); 
+    newButton.setAttribute('data-title-no-tooltip', 'Stamp a note')
     newButton.setAttribute('aria-label', 'Stamp note keyboard shortcut s');
     newButton.title = 'Stamp a note (s)';
+
+   
+
 
     // if u want to insert a image as button icon
     var imagePath = chrome.runtime.getURL("images/TimeNotesGrey-16.png");
@@ -41,7 +40,11 @@ function insertButton() {
     newButton.innerHTML = innerHTML;
     // Insert the new button as the first child of ytp-right-controls
     rightControlsDiv.insertBefore(newButton, rightControlsDiv.firstChild);
-    console.log("Button inserted!");
+    //console.log("Button inserted!");
+
+
+
+
 }
 
 
@@ -59,25 +62,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         videoID = message.id;
         //console.log('video id:' + message.id);
     } else if (message.action === 'Rewind') {
-      console.log('msg form popup received, value is', message.value);
+      //console.log('msg form popup received, value is', message.value);
       player.currentTime = message.value;
       //player.play();
     }
     else if (message.action === 'Edit') {
-      console.log('msg from popup: ', message.value);
+      //console.log('msg from popup: ', message.value);
       stampNote(message.note, message.value);
     }
     else if (message.action === 's key shortcut') {
-      /*if ( document.activeElement.id === 'contenteditable-root') {
-        // The 's' key was pressed in an input field or textarea
-        console.log('User is typing in an input field or textarea.');
-        sendResponse('shortcut key reached content');
-        return;
-      }*/
       stampNote();
     }
     else {
-      console.log('message fialed womp womp');
+      console.log('message failed womp womp');
     }
 });
 
@@ -94,18 +91,13 @@ document.addEventListener('keydown', function (event) {
     if (event.key === 's') {
       const focusedElement = document.activeElement;
       const isTyping = ['INPUT', 'TEXTAREA'].includes(focusedElement.tagName);
-      /*
-      if ( document.activeElement.id === 'contenteditable-root' || document.activeElement.id === 'search-input') {
-        // The 's' key was pressed in an input field or textarea
-        console.log('User is typing in an input field or textarea.');
-        return;
-      }*/
+    
       if (isTyping || document.activeElement.id === 'contenteditable-root') {
         console.log('User is typing in an input field or textarea.');
         return;
       }
       stampNote();
-      console.log('pop up opend from webpage s key');
+      //console.log('pop up opened from webpage s key');
     }
 });
 
@@ -139,7 +131,7 @@ function stampNote(currentNote ='', timeVal = 0) {
         else {
           timeStamp = parseFloat(timeVal);
         }
-        console.log('User entered annotation:' + annotation + ' at ' + convertToTime(timeStamp));
+        //console.log('User entered annotation:' + annotation + ' at ' + convertToTime(timeStamp));
         let newStamp = [timeStamp, annotation];
 
         chrome.storage.sync.get(videoID, function(result) {
@@ -149,7 +141,7 @@ function stampNote(currentNote ='', timeVal = 0) {
             let currentVal = result[videoID];
             if (currentNote !== '') {
               currentVal = currentVal.filter(pair => pair[0] !== timeStamp);
-              console.log('after rmeoving:', currentVal);
+              //console.log('after removing:', currentVal);
             }
 
             saveToStack = currentVal;
@@ -177,11 +169,11 @@ function stampNote(currentNote ='', timeVal = 0) {
               console.log('Data saved for ' + videoID);
             });
 
-            console.log(result[videoID]);
+            //console.log(result[videoID]);
           
           // adds new key
           } else {
-            console.log(videoID + ' is not used yet');
+            //console.log(videoID + ' is not used yet');
             
             let newVal = {};
             newVal[videoID] = [newStamp];
@@ -190,7 +182,7 @@ function stampNote(currentNote ='', timeVal = 0) {
               console.log('Data saved for ' + videoID);
             });
 
-            console.log(result[videoID]);
+            //console.log(result[videoID]);
           }
           
         });
@@ -200,9 +192,3 @@ function stampNote(currentNote ='', timeVal = 0) {
 }
 
 
-
-
-/*
-  check if button exists by doing var chekc = document.getElementsByClassName("")[0];
-
-*/

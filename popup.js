@@ -20,6 +20,210 @@ async function getStorage(id) {
   });
 }
 
+
+
+/*
+
+async function rewind(event) {
+  return new Promise((resolve, reject) => {
+      let currButton = event.target;
+      let timeStamp = ((currButton.parentNode).parentNode).id;
+      console.log('button pressed');
+      let currentTime = parseFloat(timeStamp);
+
+      chrome.runtime.sendMessage({ action: 'Rewind', value: currentTime }, function(response) {
+          console.log(response);
+          resolve(response); // Resolve the promise when the message is sent
+      });
+  });
+}
+
+async function deleteNote(event) {
+  try {
+      let currButton = event.target.closest('.delete-buttons');
+      let currentID = (((currButton.parentNode).parentNode).parentNode).className;
+      let stampToDelete = ((currButton.parentNode).parentNode).id;
+      console.log('delete clicked', stampToDelete);
+      
+      const response = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ action: 'Delete', value: stampToDelete, id: currentID }, function(response) {
+              resolve(response);
+          });
+      });
+
+      const result = await new Promise((resolve, reject) => {
+          chrome.storage.sync.get(currentID, function(result) {
+              let updatedData = result[currentID].filter(pair => pair[0] !== parseFloat(stampToDelete));
+              let updateVal = {};
+              updateVal[currentID] = updatedData;
+              
+              chrome.storage.sync.set(updateVal, function() {
+                  console.log('Data has been updated.', updatedData);
+                  resolve();
+              });
+          });
+      });
+
+      generateList('no title', currentID);
+  } catch (error) {
+      console.error(error);
+  }
+}
+
+async function edit(event) {
+  try {
+      let currButton = event.target.closest('.edit-buttons');
+      let currentID = (((currButton.parentNode).parentNode).parentNode).className;
+      let stampToEdit = ((currButton.parentNode).parentNode).id;
+      
+      let currentNote = currButton.parentNode.parentNode.children[0].children[1].textContent;
+      console.log('button object', currButton);
+      console.log('current annot', currButton.parentNode.parentNode.children[0].children[1].textContent);
+
+      const response = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ action: 'Edit', value: stampToEdit, id: currentID, note: currentNote }, function(response) {
+              resolve(response);
+          });
+      });
+
+      generateList('no title', currentID);
+  } catch (error) {
+      console.error(error);
+  }
+}
+
+async function undo(event, empty) {
+  try {
+      let currButton = event.target.closest('.undo-button');
+      let currentID = currButton.id;
+      
+      const response = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ action: 'Undo', id: currentID }, function(response) {
+              resolve(response);
+          });
+      });
+
+      generateList(empty, currentID);
+  } catch (error) {
+      console.error(error);
+  }
+}
+
+async function clearAll(event) {
+  try {
+      let currButton = event.target.closest('.clear-button');
+      let currentID = currButton.id;
+      
+      const response = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ action: 'Clear', id: currentID }, function(response) {
+              resolve(response);
+          });
+      });
+
+      generateList('no title', currentID);
+  } catch (error) {
+      console.error(error);
+  }
+}
+
+
+function setButtons() {
+  // var player = document.getElementsByClassName("video-stream")[0];
+  var timeStamps = document.getElementsByClassName('timestamp');
+  console.log(timeStamps.length);
+
+  var deleteButtons = document.getElementsByClassName('delete-buttons');
+  var editButtons = document.getElementsByClassName('edit-buttons');
+
+  var undoButton = document.getElementsByClassName('undo-button')[0];
+  var clearButton = document.getElementsByClassName('clear-button')[0];
+
+  for (let i = 0; i < timeStamps.length; i++) {
+      timeStamps[i].addEventListener('click', rewind);
+      deleteButtons[i].addEventListener('click', deleteNote);
+      editButtons[i].addEventListener('click', edit);
+  }
+
+  // undoButton.addEventListener('click',  function(event) {
+  //   undo(event, 'undo');
+  // });
+  undoButton.addEventListener('click', undo);
+
+  clearButton.addEventListener('click', clearAll);
+
+ 
+}
+
+// Checks for key clicks
+document.addEventListener('keydown', async function (event) {
+  if (event.key === 's') {
+      try {
+          const response = await new Promise((resolve, reject) => {
+              chrome.runtime.sendMessage({ action: 's shortcut key' }, function (response) {
+                  if (chrome.runtime.lastError) {
+                      reject(chrome.runtime.lastError);
+                  } else {
+                      resolve(response);
+                  }
+              });
+          });
+          console.log(response);
+      } catch (error) {
+          console.error('Error in sending s shortcut key message:', error);
+      }
+  }
+});
+
+// Listens for loading pop up
+document.addEventListener('DOMContentLoaded', async function () {
+  try {
+      const response = await new Promise((resolve, reject) => {
+          chrome.runtime.sendMessage({ action: 'checkYTVid' }, function (response) {
+              if (chrome.runtime.lastError) {
+                  reject(chrome.runtime.lastError);
+              } else {
+                  resolve(response);
+              }
+          });
+      });
+      console.log(response.isYt);
+      let videoTitle = response.title;
+      let videoKey = response.id;
+      let check = response.isYt;
+      if (check) {
+          generateList('new', videoKey);
+      } else {
+          document.getElementById('popup').innerHTML = '<div id="popup-error"> <h2>This is not a YouTube Video</h2> </div>';
+      }
+  } catch (error) {
+      console.error('Error in sending checkYTVid message:', error);
+  }
+}); */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // called when need to generate the content of popup
 function generateList(title, id) {
   if (title !== 'undoLast'){
@@ -42,7 +246,7 @@ function generateList(title, id) {
 
   chrome.storage.sync.get([id], function(result) {
     list.className = id;
-    console.log(result[id]);
+    console.log('this is the stampnotes list: ', result[id]);
     let valueList = result[id];
     
     if ((!result[id] || valueList.length === 0) && title === "new") {
@@ -58,19 +262,19 @@ function generateList(title, id) {
         emptyList.appendChild(emptyMessage);
         outerPop.append(emptyList);
 
-        /*if (title !== 'new') {
-          let undoButton = document.createElement('button');
-          undoButton.className = 'undo-button';
-          undoButton.textContent = 'Undo';
-          undoButton.id = id;
+        // if (title !== 'new') {
+        //   let undoButton = document.createElement('button');
+        //   undoButton.className = 'undo-button';
+        //   undoButton.textContent = 'Undo';
+        //   undoButton.id = id;
 
-          let empty = 'undoEmpty'
-          undoButton.addEventListener('click', function(event) {
-            undoClick(event, empty);
-          });
+        //   let empty = 'undoEmpty'
+        //   undoButton.addEventListener('click', function(event) {
+        //     undoClick(event, empty);
+        //   });
 
-          outerPop.appendChild(undoButton);
-        }*/
+        //   outerPop.appendChild(undoButton);
+        // }
         
         
         return;
@@ -122,10 +326,10 @@ function generateList(title, id) {
       let noteDiv = document.createElement('div');
       noteDiv.className = 'annotation';
       noteDiv.textContent = note;
-      /*
-      deleteButtonCols.appendChild(del);
-      item.appendChild(timeDiv);
-      item.appendChild(noteDiv);*/
+      
+      //deleteButtonCols.appendChild(del);
+      //item.appendChild(timeDiv);
+      //item.appendChild(noteDiv);
       
       let stampNote = document.createElement('li');
       stampNote.className = 'stampnote';
@@ -178,12 +382,9 @@ function generateList(title, id) {
 function rewindClick(event) {
   let currButton = event.target;
   let timeStamp = ((currButton.parentNode).parentNode).id;
-  console.log('button pressed');
+  //console.log('button pressed');
   let currentTime = parseFloat(timeStamp);
-  //player.currentTime = 0;//parseFloat(timeStamp);
-  //player.play();
-  // send message to content.js
-
+  
   chrome.runtime.sendMessage({ action: 'Rewind', value: currentTime }, function(response) {
     console.log(response);
   });
@@ -194,8 +395,8 @@ function deleteClick(event) {
 
   let currentID = (((currButton.parentNode).parentNode).parentNode).className;
   let stampToDelete = ((currButton.parentNode).parentNode).id;
-  console.log('delete lcicked', stampToDelete );
-
+  //console.log('delete clicked', stampToDelete );
+  
   chrome.runtime.sendMessage({ action: 'Delete', value: stampToDelete, id: currentID}, function(response) {
     console.log(response);
 
@@ -203,14 +404,13 @@ function deleteClick(event) {
       let updatedData = result[currentID].filter(pair => pair[0] !== parseFloat(stampToDelete));
       let updateVal = {};
       updateVal[currentID] = updatedData;
+      
       chrome.storage.sync.set(updateVal, function() {
         console.log('Data has been updated.', updatedData);
         generateList('no title', currentID);
       });
     });
-  });
-
-  
+  });  
 }
 
 function editClick(event) {
@@ -220,8 +420,8 @@ function editClick(event) {
   let stampToEdit = ((currButton.parentNode).parentNode).id;
   
   let currentNote = currButton.parentNode.parentNode.children[0].children[1].textContent;
-  console.log('button object', currButton);
-  console.log('current annot', currButton.parentNode.parentNode.children[0].children[1].textContent);
+  //console.log('button object', currButton);
+  //console.log('current annot', currButton.parentNode.parentNode.children[0].children[1].textContent);
   
 
   chrome.runtime.sendMessage({ action: 'Edit', value: stampToEdit, id: currentID, note: currentNote }, function(response) {
@@ -229,13 +429,14 @@ function editClick(event) {
     console.log('edit response is', response);
     generateList('no title', currentID);
   });
+
 }
 
 
 function undoClick(event, empty) {
   let currButton = event.target.closest('.undo-button');
   let currentID = currButton.id;
-
+  
   chrome.runtime.sendMessage({ action: 'Undo', id: currentID}, function(response) {
     console.log('response is', response);
     console.log('undo sent from pop', currentID);
@@ -243,6 +444,7 @@ function undoClick(event, empty) {
     generateList(empty, currentID);
         
   });
+
 }
 
 
@@ -255,13 +457,14 @@ function clearClick(event) {
 
     generateList('no title', currentID)
   });
+
 }
 
 
 function setUpButtons() {
   //var player = document.getElementsByClassName("video-stream")[0];
   var timeStamps = document.getElementsByClassName('timestamp');
-  console.log(timeStamps.length);
+  //console.log(timeStamps.length);
 
   var deleteButtons = document.getElementsByClassName('delete-buttons');
   var editButtons = document.getElementsByClassName('edit-buttons');
@@ -276,11 +479,12 @@ function setUpButtons() {
     editButtons[i].addEventListener('click', editClick);
   }
 
-  undoButton.addEventListener('click',  function(event) {
-    undoClick(event, 'undo');
-  });
-
+  // undoButton.addEventListener('click',  function(event) {
+  //   undoClick(event, 'undo');
+  // });
+  undoButton.addEventListener('click', undoClick);
   clearButton.addEventListener('click', clearClick);
+
 
 }
 
@@ -297,10 +501,10 @@ document.addEventListener('keydown', function (event) {
 
 
 // listens for loading pop up
-document.addEventListener('DOMContentLoaded', function() { 
+document.addEventListener('DOMContentLoaded', async function() { 
     // sends a message to background.js to get information of the webpage
     chrome.runtime.sendMessage({ action: 'checkYTVid' }, function(response) {
-        console.log(response.isYt); 
+        //console.log(response.isYt); 
         let videoTitle = response.title;
         let videoKey = response.id;
         let check = response.isYt;
@@ -311,6 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('popup').innerHTML = '<div id="popup-error"> <h2>This is not a YouTube Video</h2> </div>';
         }
     });
+  
      
 
     
