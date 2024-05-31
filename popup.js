@@ -22,186 +22,6 @@ async function getStorage(id) {
 
 
 
-/*
-
-async function rewind(event) {
-  return new Promise((resolve, reject) => {
-      let currButton = event.target;
-      let timeStamp = ((currButton.parentNode).parentNode).id;
-      console.log('button pressed');
-      let currentTime = parseFloat(timeStamp);
-
-      chrome.runtime.sendMessage({ action: 'Rewind', value: currentTime }, function(response) {
-          console.log(response);
-          resolve(response); // Resolve the promise when the message is sent
-      });
-  });
-}
-
-async function deleteNote(event) {
-  try {
-      let currButton = event.target.closest('.delete-buttons');
-      let currentID = (((currButton.parentNode).parentNode).parentNode).className;
-      let stampToDelete = ((currButton.parentNode).parentNode).id;
-      console.log('delete clicked', stampToDelete);
-      
-      const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'Delete', value: stampToDelete, id: currentID }, function(response) {
-              resolve(response);
-          });
-      });
-
-      const result = await new Promise((resolve, reject) => {
-          chrome.storage.sync.get(currentID, function(result) {
-              let updatedData = result[currentID].filter(pair => pair[0] !== parseFloat(stampToDelete));
-              let updateVal = {};
-              updateVal[currentID] = updatedData;
-              
-              chrome.storage.sync.set(updateVal, function() {
-                  console.log('Data has been updated.', updatedData);
-                  resolve();
-              });
-          });
-      });
-
-      generateList('no title', currentID);
-  } catch (error) {
-      console.error(error);
-  }
-}
-
-async function edit(event) {
-  try {
-      let currButton = event.target.closest('.edit-buttons');
-      let currentID = (((currButton.parentNode).parentNode).parentNode).className;
-      let stampToEdit = ((currButton.parentNode).parentNode).id;
-      
-      let currentNote = currButton.parentNode.parentNode.children[0].children[1].textContent;
-      console.log('button object', currButton);
-      console.log('current annot', currButton.parentNode.parentNode.children[0].children[1].textContent);
-
-      const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'Edit', value: stampToEdit, id: currentID, note: currentNote }, function(response) {
-              resolve(response);
-          });
-      });
-
-      generateList('no title', currentID);
-  } catch (error) {
-      console.error(error);
-  }
-}
-
-async function undo(event, empty) {
-  try {
-      let currButton = event.target.closest('.undo-button');
-      let currentID = currButton.id;
-      
-      const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'Undo', id: currentID }, function(response) {
-              resolve(response);
-          });
-      });
-
-      generateList(empty, currentID);
-  } catch (error) {
-      console.error(error);
-  }
-}
-
-async function clearAll(event) {
-  try {
-      let currButton = event.target.closest('.clear-button');
-      let currentID = currButton.id;
-      
-      const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'Clear', id: currentID }, function(response) {
-              resolve(response);
-          });
-      });
-
-      generateList('no title', currentID);
-  } catch (error) {
-      console.error(error);
-  }
-}
-
-
-function setButtons() {
-  // var player = document.getElementsByClassName("video-stream")[0];
-  var timeStamps = document.getElementsByClassName('timestamp');
-  console.log(timeStamps.length);
-
-  var deleteButtons = document.getElementsByClassName('delete-buttons');
-  var editButtons = document.getElementsByClassName('edit-buttons');
-
-  var undoButton = document.getElementsByClassName('undo-button')[0];
-  var clearButton = document.getElementsByClassName('clear-button')[0];
-
-  for (let i = 0; i < timeStamps.length; i++) {
-      timeStamps[i].addEventListener('click', rewind);
-      deleteButtons[i].addEventListener('click', deleteNote);
-      editButtons[i].addEventListener('click', edit);
-  }
-
-  // undoButton.addEventListener('click',  function(event) {
-  //   undo(event, 'undo');
-  // });
-  undoButton.addEventListener('click', undo);
-
-  clearButton.addEventListener('click', clearAll);
-
- 
-}
-
-// Checks for key clicks
-document.addEventListener('keydown', async function (event) {
-  if (event.key === 's') {
-      try {
-          const response = await new Promise((resolve, reject) => {
-              chrome.runtime.sendMessage({ action: 's shortcut key' }, function (response) {
-                  if (chrome.runtime.lastError) {
-                      reject(chrome.runtime.lastError);
-                  } else {
-                      resolve(response);
-                  }
-              });
-          });
-          console.log(response);
-      } catch (error) {
-          console.error('Error in sending s shortcut key message:', error);
-      }
-  }
-});
-
-// Listens for loading pop up
-document.addEventListener('DOMContentLoaded', async function () {
-  try {
-      const response = await new Promise((resolve, reject) => {
-          chrome.runtime.sendMessage({ action: 'checkYTVid' }, function (response) {
-              if (chrome.runtime.lastError) {
-                  reject(chrome.runtime.lastError);
-              } else {
-                  resolve(response);
-              }
-          });
-      });
-      console.log(response.isYt);
-      let videoTitle = response.title;
-      let videoKey = response.id;
-      let check = response.isYt;
-      if (check) {
-          generateList('new', videoKey);
-      } else {
-          document.getElementById('popup').innerHTML = '<div id="popup-error"> <h2>This is not a YouTube Video</h2> </div>';
-      }
-  } catch (error) {
-      console.error('Error in sending checkYTVid message:', error);
-  }
-}); */
-
-
-
 
 
 
@@ -261,21 +81,6 @@ function generateList(title, id) {
         emptyMessage.innerHTML = 'Click on <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-stamp"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-3-3c-1.66 0-3 1-3 3s1 2 1 3.5V13"/></svg> or press <code>S</code> to add a StampNote';
         emptyList.appendChild(emptyMessage);
         outerPop.append(emptyList);
-
-        // if (title !== 'new') {
-        //   let undoButton = document.createElement('button');
-        //   undoButton.className = 'undo-button';
-        //   undoButton.textContent = 'Undo';
-        //   undoButton.id = id;
-
-        //   let empty = 'undoEmpty'
-        //   undoButton.addEventListener('click', function(event) {
-        //     undoClick(event, empty);
-        //   });
-
-        //   outerPop.appendChild(undoButton);
-        // }
-        
         
         return;
     }
@@ -524,7 +329,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // converts seconds into time format
 function convertToTime(totalSeconds) {
-  let rounded = Math.round(totalSeconds);
+  let rounded = Math.floor(totalSeconds);//Math.round(totalSeconds);
   let hours = Math.floor(rounded / 3600);
   let minutes = Math.floor((rounded % 3600) / 60);
   var seconds = Math.floor(rounded % 60);

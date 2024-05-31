@@ -5,9 +5,8 @@
     "version": "1.0.0",
     "permissions": [
         "storage",
-        "activeTab",
-        "scripting",
-        "tabs"
+        "tabs",
+        "activeTab"
     ],
     "host_permissions": ["https://*.youtube.com/*"],
     "icons": {
