@@ -8,11 +8,38 @@
 
 console.log('Content script is running / loaded!');
 
-// inject button
+// create button
 var buttonInserted = false;
 var newButton =  document.createElement('button');
 var player;
 var videoID;
+var playerObj;
+var adLength = 0;
+var videoRun = false;
+
+function calcAd() {
+  if (videoRun) {
+    adLength = player.currentTime - convertToSeconds(getCurrentTime());
+    adLength = Math.floor(adLength);
+  }
+}
+
+// dynamically updates ad length
+setInterval(calcAd, 1000);
+
+/*
+function injectYouTubeAPI() {
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+function createPlayerContainer() {
+  var playerContainer = document.createElement('div');
+  playerContainer.id = 'player'; 
+  document.body.appendChild(playerContainer);
+}*/
 
 
 function insertButton() {    
@@ -53,17 +80,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'tabUpdated') {
         if (buttonInserted === false) {
             insertButton();
+         
             buttonInserted = true;
         }
         if (!player) {
         // Create the player
             player = document.getElementsByClassName('video-stream')[0];
+            //playerObj = new YT.Player('player');
+            videoRun = true;
         }
         videoID = message.id;
         //console.log('video id:' + message.id);
     } else if (message.action === 'Rewind') {
       //console.log('msg form popup received, value is', message.value);
-      player.currentTime = message.value;
+      player.currentTime = message.value + adLength;
+      //playerObj.seekTo(message.value);
       //player.play();
     }
     else if (message.action === 'Edit') {
@@ -102,6 +133,11 @@ document.addEventListener('keydown', function (event) {
 });
 
 
+function getCurrentTime() {
+  return document.querySelector('.ytp-time-current').textContent;
+}
+
+
 // converts seconds into time format
 function convertToTime(totalSeconds) {
   let rounded = Math.round(totalSeconds);
@@ -118,6 +154,19 @@ function convertToTime(totalSeconds) {
   return hours + ':' + minutes + ':' + seconds;
 }
 
+// converts to seconds format
+function convertToSeconds(playbackTime) {
+  const timeComponents = playbackTime.split(':').map(component => parseInt(component));
+  let seconds = 0;
+
+  for (let i = 0; i < timeComponents.length; i++) {
+    const component = timeComponents[i];
+    seconds += component * Math.pow(60, timeComponents.length - 1 - i);
+  }
+
+  return seconds;
+}
+
 
 // stamping a note
 function stampNote(currentNote ='', timeVal = 0) {
@@ -126,7 +175,8 @@ function stampNote(currentNote ='', timeVal = 0) {
     const annotation = prompt('Enter your annotation:', currentNote);
     if (annotation !== '' && annotation !== null) {
         if (currentNote === '') {
-          timeStamp = player.currentTime;
+          //timeStamp = player.currentTime;
+          timeStamp = convertToSeconds(getCurrentTime());
         }
         else {
           timeStamp = parseFloat(timeVal);

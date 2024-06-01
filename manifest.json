@@ -2,11 +2,10 @@
     "manifest_version": 3,
     "name": "StampNotes for YouTube",
     "description": "Create and save timestamps with custom notes on YouTube videos",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "permissions": [
         "storage",
-        "tabs",
-        "activeTab"
+        "tabs"
     ],
     "host_permissions": ["https://*.youtube.com/*"],
     "icons": {
